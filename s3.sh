@@ -41,7 +41,7 @@ echo ::1        localhost >> etc/hosts
 echo 127.0.1.1      archpc >> etc/hosts 
 
 # [Install Pacages ]    
-pacman -S   grub networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools efibootmgr base-devel linux-headers bluez bluez-utils cups openssh &&
+pacman -S   grub networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools efibootmgr base-devel linux-headers bluez bluez-utils cups openssh 
 # ====================================================
 
 mkdir /boot/efi

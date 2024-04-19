@@ -1,23 +1,30 @@
 #!/usr/bin/env bash
 
+# List available block devices (optional for verification)
 lsblk
 
-# Check for existing drive
+# Prompt user for disk name
 read -p "Enter the disk name (e.g., sda): " DISKSELECTED
 
-# Validate input to ensure only disk name is entered
+# Validate input (only letters)
 if [[ ! "$DISKSELECTED" =~ ^[[:alpha]]+$ ]]; then
   echo "Error: Invalid disk name. Please enter only the disk name (e.g., sda)."
   exit 1
 fi
 
-# Construct the full path with /dev/ prefix
+# Construct full path with /dev/ prefix
 DISK="/dev/$DISKSELECTED"
 
+# Check if the disk is a block device (with appropriate permissions)
 if [[ ! -b "$DISK" ]]; then
   echo "Error: '$DISK' is not a valid block device."
   exit 1
 fi
+
+# Get user confirmation (assuming you want to continue)
+echo "This script will partition and format the entire drive '$DISK'."
+echo "**WARNING:** All data on the drive will be lost. Proceed (y/N)?"
+read -r confirmation
 
 # Get user confirmation before proceeding
 echo "This script will partition and format the entire drive '$DISK'."

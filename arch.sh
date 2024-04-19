@@ -104,8 +104,9 @@ echo "--------------------------------------"
 
  
 
-pacstrap /mnt networkmanager network-manager-applet wireless_tools nano intel-ucode bluez bluez-utils blueman git --noconfirm --needed 
-
+ # pacstrap /mnt networkmanager network-manager-applet wireless_tools  bluez bluez-utils  --noconfirm --needed 
+# xdg-utils xdg-user-dir
+pacstrap /mnt grub iwd networkmanager network-manager-applet wireless_tools nano intel-ucode blueman git wpa_supplicant dialog os-prober mtools dosfstools base-devel linux-headers bluez  bluez-utils cups s  openssh blueman git --noconfirm --needed 
  
 
 # fstab 
@@ -194,45 +195,14 @@ echo "-------------------------------------------------"
 
  
 
-pacman -S xorg pulseaudio --noconfirm --needed 
+pacman -S  pulseaudio --noconfirm --needed 
 
  
 
-systemctl enable NetworkManager bluetooth 
-
+systemctl enable NetworkManager bluetooth iwd bluetooth cups ssh
+# Systemctl enable NetworkManager && Systemctl enable iwd && Systemctl enable bluetooth Systemctl enable cups && Systemctl enable sshd  
  
 
-#DESKTOP ENVIRONMENT 
-
-if [[ $DESKTOP == '1' ]] 
-
-then  
-
-    pacman -S gnome gdm --noconfirm --needed 
-
-    systemctl enable gdm 
-
-elif [[ $DESKTOP == '2' ]] 
-
-then 
-
-    pacman -S plasma sddm kde-applications --noconfirm --needed 
-
-    systemctl enable sddm 
-
-elif [[ $DESKTOP == '3' ]] 
-
-then 
-
-    pacman -S xfce4 xfce4-goodies lightdm lightdm-gtk-greeter --noconfirm --needed 
-
-    systemctl enable lightdm 
-
-else 
-
-    echo "You have choosen to Install Desktop Yourself" 
-
-fi 
 
  
 

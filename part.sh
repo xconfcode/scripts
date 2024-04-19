@@ -3,7 +3,7 @@
 lsblk
 
 lsblk
-sudo genfstab -p /mnt >> /mnt/etc/fstab
+
 
 # Check for existing drive
 read -p "Enter the disk name (e.g., sda): " DISKSELECTED
@@ -32,7 +32,7 @@ EFI_SIZE=512M
 SWAP_SIZE=8G
 
 # Create partitions with GPT labels
-parted $DISK
+sudo genfstab -p /mnt >> /mnt/etc/fstab
 
 parted -a optimal "$DISK" mklabel gpt
 parted -a optimal "$DISK" mkpart primary 0% ${EFI_SIZE}

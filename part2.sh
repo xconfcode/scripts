@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to create GPT partitions on selected disk
+# Script to create GPT partitions on selected disks in Arch medium
 
 # Function to list available disks
 list_disks() {
@@ -15,8 +15,13 @@ list_disks() {
     exit 1
   fi
   echo "Available GPT disks:"
-  select disk in "${disks[@]}"; do
+  PS3="Select a disk (use number or 'all' for all disks): "
+  select disk in "${disks[@]}" "all"; do
     if [[ $? -eq 0 ]]; then
+      if [[ $REPLY == "all" ]]; then
+        echo "Selected all disks: ${disks[@]}"
+        return 0
+      fi
       echo "Selected disk: $disk"
       return 0
     fi
@@ -25,55 +30,48 @@ list_disks() {
   return 1
 }
 
-# Select disk
+# Select disks
 if ! list_disks; then
   exit 1
 fi
-read -p "Enter the selected disk again for confirmation (e.g., /dev/sda): " disk
+read -p "Enter selected disks again for confirmation (separate by spaces, or 'all' for all): " disks
 
-# Get user confirmation
-read -p "WARNING: This script will erase data on the selected disk. Continue? (y/N) " -r answer
-if [[ ! $answer =~ ^[Yy]$ ]]; then
-  exit 0
-fi
+# Function to create partitions on a disk
+create_partitions() {
+  local disk="$1"
+  if [[ $disk == "all" ]]; then
+    for disk in /dev/sd*; do
+      if [[ $(fdisk -l $disk | grep 'disk label' | awk '{print $NF}') == "gpt" ]]; then
+        create_partitions $disk
+      fi
+    done
+    return
+  fi
 
-# Loop until valid partition scheme is created
-while true; do
-  # Clear the screen
-  clear
-
-  # Get user input for partition sizes
-  read -p "Enter size (in MiB) for EFI partition (recommended: 512): " efi_size
-  read -p "Enter size (in GiB) for swap partition (recommended: 8): " swap_size
-  read -p "Enter remaining space percentage for Linux partition: " linux_percent
-
-  # Calculate size for Linux partition based on user input
-  total_sectors=$(fdisk -l $disk | grep 'total sectors' | awk '{print $NF}')
-  linux_sectors=$(($total_sectors * $linux_percent / 100))
-
-  # Verify user input
-  if [[ -z $efi_size || -z $swap_size || -z $linux_percent ]]; then
-    echo "Please enter values for all partitions."
-    continue
+  # Get user confirmation
+  read -p "WARNING: This will erase data on $disk. Continue? (y/N) " -r answer
+  if [[ ! $answer =~ ^[Yy]$ ]]; then
+    return
   fi
 
   # Create partitions
   parted -s $disk mklabel gpt
-  parted -s $disk mkpart primary 0% ${efi_size}MiB
+  parted -s $disk mkpart primary 0% 512MiB
   parted -s $disk set 1 esp on
-  parted -s $disk mkpart primary ${efi_size}MiB ${((efi_size + swap_size * 1024))}MiB
+  parted -s $disk mkpart primary 512MiB -  # Use remaining space for swap
   parted -s $disk set 2 swap on
-  parted -s $disk mkpart primary ${((efi_size + swap_size * 1024))}MiB 100%
+  parted -s $disk mkpart primary -  # Use remaining space for Linux
   parted -s $disk set 3 linux-fmt
 
-  # Print partition table for confirmation
+  # Print partition table
   parted -p $disk
 
-  # Ask for confirmation
-  read -p "Are you sure you want to create these partitions? (y/N) " -r confirm
-  if [[ $confirm =~ ^[Yy]$ ]]; then
-    break
-  fi
+  echo "Partitions created on $disk."
+}
+
+# Create partitions on selected disks
+for disk in $disks; do
+  create_partitions "$disk"
 done
 
 # Inform user about next steps

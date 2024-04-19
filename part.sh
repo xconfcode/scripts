@@ -1,30 +1,23 @@
 #!/usr/bin/env bash
 
-# List available block devices (optional for verification)
 lsblk
 
-# Prompt user for disk name
+# Check for existing drive
 read -p "Enter the disk name (e.g., sda): " DISKSELECTED
 
-# Validate input (only letters)
+# Validate input to ensure only disk name is entered
 if [[ ! "$DISKSELECTED" =~ ^[[:alpha]]+$ ]]; then
   echo "Error: Invalid disk name. Please enter only the disk name (e.g., sda)."
   exit 1
 fi
 
-# Construct full path with /dev/ prefix
+# Construct the full path with /dev/ prefix
 DISK="/dev/$DISKSELECTED"
 
-# Check if the disk is a block device (with appropriate permissions)
 if [[ ! -b "$DISK" ]]; then
   echo "Error: '$DISK' is not a valid block device."
   exit 1
 fi
-
-# Get user confirmation (assuming you want to continue)
-echo "This script will partition and format the entire drive '$DISK'."
-echo "**WARNING:** All data on the drive will be lost. Proceed (y/N)?"
-read -r confirmation
 
 # Get user confirmation before proceeding
 echo "This script will partition and format the entire drive '$DISK'."
@@ -36,33 +29,47 @@ if [[ ! $confirmation =~ ^[Yy]$ ]]; then
   exit 0
 fi
 
-# Define partition sizes as percentages
-EFI_SIZE=512M
-SWAP_SIZE=8G
+# Define partition sizes in sectors (modify as needed)
+EFI_SIZE=$( expr 512 \* 1024 \* 1024 )  # Convert size to sectors (512 MB)
+SWAP_SIZE=$( expr 8 \* 1024 \* 1024 \* 1024 )  # Convert size to sectors (8 GB)
 
-# Create partitions with GPT labels
-parted -a optimal "$DISK" mklabel gpt
-parted -a optimal "$DISK" mkpart primary 0% ${EFI_SIZE}
-parted -a optimal "$DISK" mkpart primary ${EFI_SIZE} ${SWAP_SIZE}
-parted -a optimal "$DISK" mkpart primary ${SWAP_SIZE} 100%
+# Create a temporary file with sfdisk commands
+SFDISK_SCRIPT=$(mktemp)
 
-# Assign partition names (changed line)
-parted -m "$DISK" set 1 ESP  # Set the first partition as EFI
+cat << EOF > "$SFDISK_SCRIPT"
+g  # Create a GPT partition table
+n  # New partition (primary)
+p  # Primary partition
+1   # Partition number (1)
+0%  # First sector (beginning)
+${EFI_SIZE} # Last sector
+n  # New partition (primary)
+p  # Primary partition
+2   # Partition number (2)
+${EFI_SIZE} # First sector
+${SWAP_SIZE} # Last sector
+n  # New partition (primary)
+p  # Primary partition
+3   # Partition number (3)
+${SWAP_SIZE} # First sector
+100% # Last sector
+EOF
 
-# Update partition paths with prefix
-DISK_WITH_PREFIX="$DISK"
-EFI_PARTITION="${DISK_WITH_PREFIX}p1"
-SWAP_PARTITION="${DISK_WITH_PREFIX}p2"
-ROOT_PARTITION="${DISK_WITH_PREFIX}p3"
+# Run sfdisk to create partitions
+sudo sfdisk "$DISK" < "$SFDISK_SCRIPT"
 
-# Format partitions
-mkfs.vfat -F32 -n "EFISYSTEM" "$EFI_PARTITION"
-mkswap "$SWAP_PARTITION"
-swapon "$SWAP_PARTITION"  # Enable swap before formatting root
-mkfs.ext4 -L "ROOT" "$ROOT_PARTITION"
+# Remove temporary file
+rm "$SFDISK_SCRIPT"
 
-echo "Partitions created successfully:"
-echo "  - EFI partition: $EFI_PARTITION"
-echo "  - Swap partition: $SWAP_PARTITION"
-echo "  - Root partition: $ROOT_PARTITION"
+# Assign partition names (using fdisk)
+sudo fdisk -m "$DISK" << EOF
+0  # Select disk
+set 1 esp  # Set partition 1 as EFI
+set 2 swap  # Set partition 2 as swap
+set 3 linux # Set partition 3 as linux
+w  # Write changes
+EOF
 
+# Rest of the script for formatting remaining partitions...
+
+echo "Partitions created successfully."

@@ -300,7 +300,7 @@ REALEND
 
  
 
-arch-chroot /mnt sh next.sh 
+
 
 
 arch-chroot /mnt sh next.sh

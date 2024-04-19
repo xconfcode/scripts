@@ -32,6 +32,8 @@ EFI_SIZE=512M
 SWAP_SIZE=8G
 
 # Create partitions with GPT labels
+parted $DISK
+
 parted -a optimal "$DISK" mklabel gpt
 parted -a optimal "$DISK" mkpart primary 0% ${EFI_SIZE}
 parted -a optimal "$DISK" mkpart primary ${EFI_SIZE} ${SWAP_SIZE}

@@ -2,6 +2,8 @@
 
 lsblk
 
+lsblk
+
 # Check for existing drive
 read -p "Enter the disk name (e.g., sda): " DISKSELECTED
 
@@ -12,7 +14,6 @@ DISK="/dev/$DISKSELECTED"
 if [[ ! -b "$DISK" ]]; then
   echo "Error: '$DISK' is not a valid block device."
   exit 1
-
 fi
 
 # Get user confirmation before proceeding
@@ -54,4 +55,3 @@ echo "Partitions created successfully:"
 echo "  - EFI partition: $EFI_PARTITION"
 echo "  - Swap partition: $SWAP_PARTITION"
 echo "  - Root partition: $ROOT_PARTITION"
-

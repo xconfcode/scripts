@@ -12,8 +12,7 @@ DISK="/dev/$DISKSELECTED"
 if [[ ! -b "$DISK" ]]; then
   echo "Error: '$DISK' is not a valid block device."
   exit 1
-else 
-    echo "disk exist"
+
 fi
 
 # Get user confirmation before proceeding

@@ -3,6 +3,7 @@
 lsblk
 
 lsblk
+sudo genfstab -p /mnt >> /mnt/etc/fstab
 
 # Check for existing drive
 read -p "Enter the disk name (e.g., sda): " DISKSELECTED

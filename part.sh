@@ -2,7 +2,7 @@
 
 lsblk
 
-lsblk
+
 
 
 # Check for existing drive
@@ -32,12 +32,12 @@ EFI_SIZE=512M
 SWAP_SIZE=8G
 
 # Create partitions with GPT labels
-sudo genfstab -p /mnt >> /mnt/etc/fstab
 
-parted -a optimal "$DISK" mklabel gpt
-parted -a optimal "$DISK" mkpart primary 0% ${EFI_SIZE}
-parted -a optimal "$DISK" mkpart primary ${EFI_SIZE} ${SWAP_SIZE}
-parted -a optimal "$DISK" mkpart primary ${SWAP_SIZE} 100%
+#parted /dev/sda mklabel gpt mkpart P1 ext3 1MiB 8MiB
+parted "$DISK" mklabel gpt
+parted "$DISK" mkpart primary 0% ${EFI_SIZE}
+parted "$DISK" mkpart primary ${EFI_SIZE} ${SWAP_SIZE}
+parted "$DISK" mkpart primary ${SWAP_SIZE} 100%
 
 # Assign partition names (changed line)
 parted -m "$DISK" set 1 ESP  # Set the first partition as EFI

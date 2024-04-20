@@ -37,13 +37,13 @@ mount "${ROOT}" /mnt
 # pacstrap /mnt base base-devel --noconfirm --needed
 
 # kernel
-pacstrap /mnt base linux linux-firmware nano sudo vim  --noconfirm --needed
+pacstrap -K /mnt base linux linux-firmware nano sudo vim  --noconfirm --needed
 
 echo "--------------------------------------"
 echo "-- Setup Dependencies               --"
 echo "--------------------------------------"
 
-pacman -S networkmanager network-manager-applet wireless_tools wpa_supplicant dialog  base-devel linux-headers bluez bluez-utils cups   openssh blueman git intel-ucode nano vim neovim  --noconfirm --needed
+pacstrap -K /mnt networkmanager network-manager-applet wireless_tools wpa_supplicant dialog  base-devel linux-headers bluez bluez-utils cups   openssh blueman git intel-ucode nano vim neovim  --noconfirm --needed
 # fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 
@@ -86,7 +86,7 @@ echo "-------------------------------------------------"
 echo "Display and Audio Drivers"
 echo "-------------------------------------------------"
 
-pacman -S  pulseaudio --noconfirm --needed
+pacman -S  pulseaudio networkmanager --noconfirm --needed
 
 systemctl enable NetworkManager bluetooth cups sshd iwd
 

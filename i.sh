@@ -86,7 +86,7 @@ echo "-------------------------------------------------"
 echo "Display and Audio Drivers"
 echo "-------------------------------------------------"
 
-pacman -S  pulseaudio networkmanager bluez bluez-utils openssh cups iwd --noconfirm --needed
+pacman -S  pulseaudio networkmanager bluez bluez-utils openssh cups iwd --noconfirm 
 
 systemctl enable NetworkManager bluetooth cups sshd iwd
 exit 

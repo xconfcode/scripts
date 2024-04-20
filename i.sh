@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+i#!/usr/bin/env bash
 
 echo "Please enter EFI paritition: (example /dev/sda1 or /dev/nvme0n1p1)"
 read EFI
@@ -89,7 +89,8 @@ echo "-------------------------------------------------"
 pacman -S  pulseaudio networkmanager --noconfirm --needed
 
 systemctl enable NetworkManager bluetooth cups sshd iwd
-
+exit 
+umount -R /mnt
 echo "-------------------------------------------------"
 echo "Install Complete, You can reboot now"
 echo "-------------------------------------------------"

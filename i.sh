@@ -43,7 +43,7 @@ echo "--------------------------------------"
 echo "-- Setup Dependencies               --"
 echo "--------------------------------------"
 
-pacman -S nvidia nvidia-utils networkmanager network-manager-applet wireless_tools wpa_supplicant dialog  base-devel linux-headers bluez bluez-utils cups   openssh blueman git intel-ucode nano vim neovim  --noconfirm --needed
+pacman -S nvidia nvidia-utils networkmanager network-manager-applet wireless_tools wpa_supplicant dialog  base-devel linux-headers bluez bluez-utils cups   openssh blueman git e nano vim neovim  --noconfirm --needed
 # fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 

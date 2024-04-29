@@ -55,7 +55,7 @@ title Arch Linux
 linux /vmlinuz-linux
 initrd /initramfs-linux.img
 options root=${ROOT} rw
-EOF
+
 
 
 cat <<REALEND > /mnt/next.sh

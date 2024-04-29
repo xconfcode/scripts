@@ -41,19 +41,21 @@ echo "Creating filesystems..."
 echo "WARNING: Make sure you selected the correct partitions!"
 
 # Create filesystems (use confirm_and_run for safety)
-confirm_and_run "mkfs.fat -F32  \"EFISYSTEM\" \"/dev/$EFI_PARTITION\""
+echo "Create filesystems .................!"
+confirm_and_run "mkfs.fat -F32 -n \"EFISYSTEM\" \"/dev/$EFI_PARTITION\""
 confirm_and_run "mkswap \"/dev/$SWAP_PARTITION\""
 swapon "/dev/$SWAP_PARTITION"
-confirm_and_run "mkfs.ext4  \"ROOT\" \"/dev/$ROOT_PARTITION\""
+confirm_and_run "mkfs.ext4 -L  \"ROOT\" \"/dev/$ROOT_PARTITION\""
 
 # Mount target directories
+echo "start mounting ...."
 mount -t ext4 "/dev/$ROOT_PARTITION" /mnt
-mkdir /mnt/boot
-mount -t vfat "/dev/$EFI_PARTITION" /mnt/boot/
+mkdir /boot/efi
+mount -t fat "/dev/$EFI_PARTITION" /boot/efi
 
 # Install base system (remove --noconfirm for manual confirmation)
 echo "Installing Arch Linux base..."
-pacstrap -K /mnt base linux linux-firmware
+pacstrap -K /mnt base linux linux-firmware sudo nano
 
 # Script for further configuration on chrooted environment
 cat << EOF > /mnt/root.sh
@@ -79,15 +81,20 @@ cat << EOF > /etc/hosts
 127.0.1.1	$USER
 EOF
 
-# Network and wireless tools
-pacman -S networkmanager network-manager-applet wireless-tools wpa_supplicant --needed
+# Network and wireless tools 
+# dosfstools xdg-utils xdg-user-dirs
+pacstrap /mnt  grub networkmanager network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools  base-devel linux-headers bluez bluez-utils cups   openssh blueman git intel-ucode nano vim neovim  --noconfirm --needed
+
+# wireless-tools 
+pacman -S networkmanager network-manager-applet wpa_supplicant --needed --noconfirm
 systemctl enable NetworkManager
 
 # Optional packages (uncomment to install)
 # pacman -S ... (list desired packages)
 
+
 # Enable essential services
-systemctl enable bluetooth cups sshd
+systemctl enable NetworkManager bluetooth cups sshd
 
 # Bootloader installation (UEFI systems)
 grub-install --target=x86_64-efi --bootloader-id=grub_uefi

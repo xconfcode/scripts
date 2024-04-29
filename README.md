@@ -14,3 +14,7 @@ curl https://raw.githubusercontent.com/xconfcode/scripts/main/comarch.sh -o coma
 ```
 sh comarch.sh
 ```
+## from shell direct 
+```
+bash <(curl -s https://raw.githubusercontent.com/xconfcode/scripts/main/Ai.sh)
+```

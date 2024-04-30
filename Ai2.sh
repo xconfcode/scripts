@@ -186,7 +186,7 @@ echo " HostName successfully Configure"
 #               [Start:: Installing GRUB && Depandency]
 # ==========================================================================
 
-pacman -S grub efibootmgr os-prober mtools networkmanager network-manager-applet wpa_supplicant dialog base-devel linux-headers bluez bluez-utils cups   openssh blueman git intel-ucode nano vim neovim  --needed --noconfirm
+pacman -S grub efibootmgr os-prober mtools networkmanager network-manager-applet wpa_supplicant dialog base-devel linux-headers  cups   openssh blueman git intel-ucode nano vim neovim  --needed --noconfirm
 # ==========================================================================
 #               [END:: Installing GRUB && Depandency]
 # ==========================================================================

@@ -69,15 +69,9 @@ echo "Successfly Formatted Partition !!!!"
 # Get user credentials
 read -r -p "Username: " USER
 read -s -p "Password: " PASSWORD
-read -s -p "RootPassword: " rootpass
+
 echo
-# Get user confirmation before proceeding
-read -r -p "want ad root pass? [y/N] " response
-if [[ ! $response =~ ^([Yy]$) ]]; then
-passwd
-$roopass
-  exit 0
-fi
+
 # ==========================================================================
 #               [END:: RootPass & user]
 # ==========================================================================

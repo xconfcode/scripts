@@ -178,8 +178,6 @@ cat << EOF > /etc/hosts
 # ==========================================================================
 #               [End:: Hostname]
 # ==========================================================================
-
-EOF
 echo " HostName successfully Configure"
 
 # ==========================================================================
@@ -222,9 +220,14 @@ systemctl enable NetworkManager bluetooth cups sshd
 
 
 exit 
+echo " exited"
 umount -R /mnt 
-Reboot
 
+echo " unmounter /mnt"
+#Reboot
+
+
+EOF
 
 # ==========================================================================
 #               [END:: chroot]

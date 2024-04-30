@@ -219,7 +219,7 @@ systemctl enable NetworkManager bluetooth cups sshd
 # ==========================================================================
 
 
-EOF
+
 
 exit 
 umount -R /mnt 
